@@ -20,12 +20,36 @@ import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 
 public class AppReviewPlugin extends ReflectiveCordovaPlugin {
     @CordovaMethod(WORKER)
-    private void requestReview(CallbackContext callbackContext) throws Exception {
-        Activity activity = cordova.getActivity();
-        ReviewManager manager = ReviewManagerFactory.create(activity);
-        ReviewInfo reviewInfo = await(manager.requestReviewFlow());
-        await(manager.launchReviewFlow(activity, reviewInfo));
-        callbackContext.success();
+    private void requestReview(final CallbackContext callbackContext) {
+        final Activity activity = cordova.getActivity();
+        final ReviewManager manager = ReviewManagerFactory.create(activity);
+
+        Task<ReviewInfo> request = manager.requestReviewFlow();
+        request.addOnCompleteListener(new OnCompleteListener<ReviewInfo>() {
+            @Override
+            public void onComplete(@NonNull Task<ReviewInfo> task) {
+                if (task.isSuccessful()) {
+                    // We got the ReviewInfo object
+                    ReviewInfo reviewInfo = task.getResult();
+                    Task<Void> flow = manager.launchReviewFlow(activity, reviewInfo);
+                    flow.addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                // The in-app review dialog is shown
+                                callbackContext.success();
+                            } else {
+                                // There was some problem, continue regardless of the result.
+                                callbackContext.success();
+                            }
+                        }
+                    });
+                } else {
+                    // There was some problem with getting the review info.
+                    callbackContext.error(task.getException().getMessage());
+                }
+            }
+        });
     }
 
     @CordovaMethod
