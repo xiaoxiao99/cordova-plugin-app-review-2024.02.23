@@ -18,6 +18,11 @@ import org.json.JSONException;
 import by.chemerisuk.cordova.support.CordovaMethod;
 import by.chemerisuk.cordova.support.ReflectiveCordovaPlugin;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import androidx.annotation.NonNull;
+
+
 public class AppReviewPlugin extends ReflectiveCordovaPlugin {
     @CordovaMethod(WORKER)
     private void requestReview(final CallbackContext callbackContext) {
