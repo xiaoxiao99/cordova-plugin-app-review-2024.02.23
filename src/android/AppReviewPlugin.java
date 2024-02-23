@@ -63,7 +63,7 @@ public class AppReviewPlugin extends ReflectiveCordovaPlugin {
         if (packageName == null) {
             packageName = cordova.getActivity().getPackageName();
         }
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + packageName));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName));
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         cordova.getActivity().startActivity(intent);
         callbackContext.success();

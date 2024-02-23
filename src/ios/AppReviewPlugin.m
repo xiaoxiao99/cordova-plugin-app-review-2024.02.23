@@ -5,9 +5,12 @@
 
 - (void)requestReview:(CDVInvokedUrlCommand *)command {
     CDVPluginResult* pluginResult;
-    if ([SKStoreReviewController class]) {
-        [SKStoreReviewController requestReview];
 
+    if (@available(iOS 14.0, *)) {
+        [SKStoreReviewController requestReviewInScene:self.viewController.view.window.windowScene];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    } else if (@available(iOS 10.3, *)) {
+        [SKStoreReviewController requestReview];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Rating dialog requires iOS 10.3+"];
